@@ -8,3 +8,4 @@ it is ros2-foxy pkg on ODROID-M1.
 ros2-foxy
 opencv
 odroid-wiringpi (libwiringpi-dev)
+librga-dev

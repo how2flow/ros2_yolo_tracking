@@ -29,6 +29,10 @@ pkg_check_modules(WIRINGPI REQUIRED libwiringpi2) # /usr/lib/$ARCH/pkg-config/li
 include_directories(${WIRINGPI_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME})
 
+# rga
+set(RGA_LIBS rga)
+set(RKNN_RT_LIB ${CMAKE_SOURCE_DIR}/lib/librknnrt.so)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
