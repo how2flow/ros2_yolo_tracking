@@ -56,6 +56,15 @@ target_link_libraries(servo
     ${WIRINGPI_LIBRARIES}
 )
 
+# install
+install(TARGETS
+  img_pub
+  img_sub
+  control
+  servo
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
   # the following line skips the linter which checks for copyrights
