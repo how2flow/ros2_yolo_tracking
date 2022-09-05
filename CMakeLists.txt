@@ -27,11 +27,34 @@ find_package(sensor_msgs REQUIRED)
 pkg_check_modules(WIRINGPI REQUIRED libwiringpi2) # /usr/lib/$ARCH/pkg-config/libwiringpi2.pc
 
 include_directories(${WIRINGPI_INCLUDE_DIRS})
-include_directories(${CMAKE_SOURCE_DIR}/include/${PROJECT_NAME})
+include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # rga
 set(RGA_LIBS rga)
 set(RKNN_RT_LIB ${CMAKE_SOURCE_DIR}/lib/librknnrt.so)
+
+# camera
+add_executable(img_pub src/img_pub.cpp src/postprocess.cc)
+ament_target_dependencies(img_pub OpenCV PkgConfig rclcpp sensor_msgs std_msgs)
+add_executable(img_sub src/img_sub.cpp)
+ament_target_dependencies(img_sub OpenCV PkgConfig rclcpp sensor_msgs std_msgs)
+target_link_libraries(img_pub
+    ${OpenCV_LIBS}
+    ${RGA_LIBS}
+    ${RKNN_RT_LIB}
+)
+target_link_libraries(img_sub
+    ${OpenCV_LIBS}
+)
+
+# motors
+add_executable(control src/control.cpp)
+ament_target_dependencies(control geometry_msgs rclcpp std_msgs PkgConfig)
+add_executable(servo src/servo.cpp)
+ament_target_dependencies(servo geometry_msgs rclcpp std_msgs PkgConfig)
+target_link_libraries(servo
+    ${WIRINGPI_LIBRARIES}
+)
 
 if(BUILD_TESTING)
   find_package(ament_lint_auto REQUIRED)
