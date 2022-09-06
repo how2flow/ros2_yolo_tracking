@@ -15,27 +15,27 @@
 
 void Sg90Subscriber_::initialize()
 {
-	auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
-	auto callback =
-		[this](const geometry_msgs::msg::Point::SharedPtr pos) {
-			motor_write(pos);
-		};
+  auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
+  auto callback =
+    [this](const geometry_msgs::msg::Point::SharedPtr pos) {
+      motor_write(pos);
+    };
 
-	// wiringPi set
-	wiringPiSetup();
-	pinMode(MOTOR_1, OUTPUT);
-	pinMode(MOTOR_2, OUTPUT);
-	softPwmCreate(MOTOR_1,0,200);
-	softPwmCreate(MOTOR_2,0,200);
+  // wiringPi set
+  wiringPiSetup();
+  pinMode(MOTOR_1, OUTPUT);
+  pinMode(MOTOR_2, OUTPUT);
+  softPwmCreate(MOTOR_1,0,200);
+  softPwmCreate(MOTOR_2,0,200);
 
-	// subscriber set
-	sub_ = create_subscription<geometry_msgs::msg::Point>(topic_, qos, callback);
+  // subscriber set
+  sub_ = create_subscription<geometry_msgs::msg::Point>(topic_, qos, callback);
 }
 
 void Sg90Subscriber_::motor_write(geometry_msgs::msg::Point::SharedPtr pos)
 {
-	softPwmWrite(MOTOR_1,pos->x);
-	softPwmWrite(MOTOR_2,pos->y);
+  softPwmWrite(MOTOR_1,pos->x);
+  softPwmWrite(MOTOR_2,pos->y);
 }
 
 int main(int argc, char * argv[])

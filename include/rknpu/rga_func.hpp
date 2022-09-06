@@ -13,10 +13,10 @@ typedef void(* FUNC_RGA_DEINIT)();
 typedef int(* FUNC_RGA_BLIT)(rga_info_t *, rga_info_t *, rga_info_t *);
 
 typedef struct _rga_context{
-    void *rga_handle;
-    FUNC_RGA_INIT init_func;
-    FUNC_RGA_DEINIT deinit_func;
-    FUNC_RGA_BLIT blit_func;
+  void *rga_handle;
+  FUNC_RGA_INIT init_func;
+  FUNC_RGA_DEINIT deinit_func;
+  FUNC_RGA_BLIT blit_func;
 } rga_context;
 
 int RGA_init(rga_context* rga_ctx);

@@ -94,7 +94,8 @@ int loadLabelName(char *locationFilename, char *label[])
     return 0;
 }
 
-static float CalculateOverlap(float xmin0, float ymin0, float xmax0, float ymax0, float xmin1, float ymin1, float xmax1, float ymax1)
+static float CalculateOverlap(float xmin0, float ymin0, float xmax0, float ymax0,
+    float xmin1, float ymin1, float xmax1, float ymax1)
 {
     float w = fmax(0.f, fmin(xmax0, xmax1) - fmax(xmin0, xmin1) + 1.0);
     float h = fmax(0.f, fmin(ymax0, ymax1) - fmax(ymin0, ymin1) + 1.0);
@@ -103,7 +104,8 @@ static float CalculateOverlap(float xmin0, float ymin0, float xmax0, float ymax0
     return u <= 0.f ? 0.f : (i / u);
 }
 
-static int nms(int validCount, std::vector<float> &outputLocations, std::vector<int> classIds, std::vector<int> &order,int filterId, float threshold)
+static int nms(int validCount, std::vector<float> &outputLocations, std::vector<int> classIds,
+    std::vector<int> &order,int filterId, float threshold)
 {
     for (int i = 0; i < validCount; ++i)
     {
@@ -274,12 +276,12 @@ int post_process(int8_t *input0, int8_t *input1, int8_t *input2, int model_in_h,
     {
         int ret = 0;
 
-	if (getenv("COCO") == NULL)
-	    snprintf(buffer, 100, LABEL_NALE_TXT_PATH);
-	else
-	    snprintf(buffer, 100, "%s", getenv("COCO"));
+  if (getenv("COCO") == NULL)
+      snprintf(buffer, 100, LABEL_NALE_TXT_PATH);
+  else
+      snprintf(buffer, 100, "%s", getenv("COCO"));
 
-	ret = loadLabelName(buffer, labels);
+  ret = loadLabelName(buffer, labels);
         if (ret < 0)
         {
             return -1;

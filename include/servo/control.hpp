@@ -3,7 +3,7 @@
 
 class PosPublisher_ : public rclcpp::Node
 {
-  public:
+public:
 	PosPublisher_()
 	: Node("key")
 	{
@@ -13,7 +13,7 @@ class PosPublisher_ : public rclcpp::Node
 	~PosPublisher_()
 	{
 	}
-  private:
+private:
 	// functions
 	void initialize();
 	void get_key_and_publish();
