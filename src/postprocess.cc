@@ -22,7 +22,7 @@
 #include "rknpu/postprocess.hpp"
 #include <stdint.h>
 
-#define LABEL_NALE_TXT_PATH "/home/odroid/robot_ws/src/npu_camera/model/coco_80_labels_list.txt"
+#define LABEL_NALE_TXT_PATH "/home/odroid/coco_80_labels_list.txt"
 
 static char *labels[OBJ_CLASS_NUM];
 
