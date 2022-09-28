@@ -3,46 +3,55 @@
 #include <string>
 #include <stdlib.h>
 
-#include <wiringPi.h>
-#include <softPwm.h>
-
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/point.hpp"
 #include "servo/servo.hpp"
+#include "servo/pwm.hpp"
 
-#define MOTOR_1 8
-#define MOTOR_2 9
+#define MOTOR_X 2
+#define MOTOR_Y 9
 
 void Sg90Subscriber_::initialize()
 {
   auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
+  auto pwm = std::make_shared<PwmSignal_>();
   auto callback =
-    [this](const geometry_msgs::msg::Point::SharedPtr pos) {
-      motor_write(pos);
+    [this](geometry_msgs::msg::Point::SharedPtr dty) {
+      servo_write(dty);
     };
 
-  // wiringPi set
-  wiringPiSetup();
-  pinMode(MOTOR_1, OUTPUT);
-  pinMode(MOTOR_2, OUTPUT);
-  softPwmCreate(MOTOR_1,0,200);
-  softPwmCreate(MOTOR_2,0,200);
+  // pwm config
+  pwm->pwm_setup(2);
+  pwm->pwm_setup(9);
 
   // subscriber set
-  sub_ = create_subscription<geometry_msgs::msg::Point>(topic_, qos, callback);
+  sub_pos = create_subscription<geometry_msgs::msg::Point>(topic_pos, qos, callback);
 }
 
-void Sg90Subscriber_::motor_write(geometry_msgs::msg::Point::SharedPtr pos)
+void Sg90Subscriber_::servo_write(geometry_msgs::msg::Point::SharedPtr pos)
 {
-  softPwmWrite(MOTOR_1,pos->x);
-  softPwmWrite(MOTOR_2,pos->y);
+  pwm_write(MOTOR_X, (int)pos->x);
+  pwm_write(MOTOR_Y, (int)pos->y);
 }
 
-int main(int argc, char * argv[])
+void Sg90Subscriber_::pwm_write(int chip, int duty_cycle)
 {
-    rclcpp::init(argc, argv);
-    auto node = std::make_shared<Sg90Subscriber_>();
-    rclcpp::spin(node);
-    rclcpp::shutdown();
-    return 0;
+  char cmd[100];
+  auto pwm = std::make_shared<PwmSignal_>();
+
+  duty_cycle = duty_cycle * 100000;
+  sprintf(cmd, "echo %d > %s/%s", duty_cycle,
+		  pwm->pwmchip[chip], pwm->pwm_option[DUTY_CYCLE]);
+  system(cmd);
+  printf("cmd = %s\n", cmd);
+}
+
+int main(int argc, char *argv[])
+{
+  rclcpp::init(argc, argv);
+  auto node = std::make_shared<Sg90Subscriber_>();
+  rclcpp::spin(node);
+  rclcpp::shutdown();
+
+  return 0;
 }

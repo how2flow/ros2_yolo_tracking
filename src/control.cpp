@@ -14,18 +14,17 @@
 void PosPublisher_::initialize()
 {
   auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
-  pub_ = this->create_publisher<geometry_msgs::msg::Point>(
-      topic_, qos);
-  mo = 0;
-  pos.x = 16;
-  pos.y = 8;
+  pub_pos = this->create_publisher<geometry_msgs::msg::Point>(
+      topic_pos, qos);
+  pos.x = 5;
+  pos.y = 5;
 
   timer_ = this->create_wall_timer(
       std::chrono::milliseconds(static_cast<int>(100)),
-      std::bind(&PosPublisher_::get_key_and_publish, this));
+      std::bind(&PosPublisher_::get_key_and_pub_pos, this));
 }
 
-void PosPublisher_::get_key_and_publish()
+void PosPublisher_::get_key_and_pub_pos()
 {
   char input;
 
@@ -33,54 +32,36 @@ void PosPublisher_::get_key_and_publish()
 
   switch (input) {
     case 'a':
-      mo -= 1;
-      if (mo <= 0)
-        mo = 0;
-      pos.x = PosPublisher_::move(mo); // -90
+      pos.x -= 1;
+      if (pos.x <= 5)
+        pos.x = 5;
       printf("x = %f\n", pos.x);
       break;
     case 'd':
-      mo += 1;
-      if (mo >= 20)
-        mo = 20;
-      pos.x = PosPublisher_::move(mo); // +90
+      pos.x += 1;
+      if (pos.x >= 25)
+        pos.x = 25;
       printf("x = %f\n", pos.x);
       break;
     case 's':
-      mo -= 1;
-      if (mo <= 0)
-        mo = 0;
-      pos.y = PosPublisher_::move(mo); // -90
+      pos.y -= 1;
+      if (pos.y <= 5)
+        pos.y = 5;
       printf("y = %f\n", pos.y);
       break;
     case 'w':
-      mo += 1;
-      if (mo >= 20)
-        mo = 20;
-      pos.y = PosPublisher_::move(mo); // 90
+      pos.y += 1;
+      if (pos.y >= 15)
+        pos.y = 15;
       printf("y = %f\n", pos.y);
       break;
     default:
-      pos.x = 5;
-      pos.y = 5;
+      printf("x = %f\n", pos.x);
+      printf("y = %f\n", pos.y);
       break;
   }
 
-  pub_->publish(pos);
-}
-
-int PosPublisher_::move(int arg)
-{
-  int ret;
-
-  if (arg <= 0)
-    return MIN;
-  ret = arg + 4;
-  if (ret > MAX)
-    return MAX;
-
-  return ret;
-
+  pub_pos->publish(pos);
 }
 
 int main(int argc, char* argv[])
