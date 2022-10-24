@@ -24,6 +24,9 @@ find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 find_package(sensor_msgs REQUIRED)
 
+pkg_check_modules(WIRINGPI REQUIRED libwiringpi2) # /usr/lib/$ARCH/pkg-config/libwiringpi2.pc
+
+include_directories(${WIRINGPI_INCLUDE_DIRS})
 include_directories(${CMAKE_SOURCE_DIR}/include)
 
 # rga
@@ -47,8 +50,11 @@ target_link_libraries(img_sub
 # motors
 add_executable(control src/control.cpp)
 ament_target_dependencies(control geometry_msgs rclcpp std_msgs PkgConfig)
-add_executable(servo src/servo.cpp src/pwm.cpp)
+add_executable(servo src/servo.cpp)
 ament_target_dependencies(servo geometry_msgs rclcpp std_msgs PkgConfig)
+target_link_libraries(servo
+    ${WIRINGPI_LIBRARIES}
+)
 
 # install
 install(TARGETS

@@ -8,16 +8,13 @@
 #include "rclcpp/rclcpp.hpp"
 #include "servo/control.hpp"
 
-#define MIN 5
-#define MAX 24
-
 void PosPublisher_::initialize()
 {
   auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
   pub_pos = this->create_publisher<geometry_msgs::msg::Point>(
       topic_pos, qos);
-  pos.x = 5;
-  pos.y = 5;
+  pos.x = X_POS_MIN;
+  pos.y = Y_POS_MIN;
 
   timer_ = this->create_wall_timer(
       std::chrono::milliseconds(static_cast<int>(100)),
@@ -32,27 +29,27 @@ void PosPublisher_::get_key_and_pub_pos()
 
   switch (input) {
     case 'a':
-      pos.x -= 1;
-      if (pos.x <= 5)
-        pos.x = 5;
+      pos.x -= POS_INTERVAL;
+      if (pos.x <= X_POS_MIN)
+        pos.x = X_POS_MIN;
       printf("x = %f\n", pos.x);
       break;
     case 'd':
-      pos.x += 1;
-      if (pos.x >= 25)
-        pos.x = 25;
+      pos.x += POS_INTERVAL;
+      if (pos.x >= X_POS_MAX)
+        pos.x = X_POS_MAX;
       printf("x = %f\n", pos.x);
       break;
     case 's':
-      pos.y -= 1;
-      if (pos.y <= 5)
-        pos.y = 5;
+      pos.y -= POS_INTERVAL;
+      if (pos.y <= Y_POS_MIN)
+        pos.y = Y_POS_MIN;
       printf("y = %f\n", pos.y);
       break;
     case 'w':
-      pos.y += 1;
-      if (pos.y >= 15)
-        pos.y = 15;
+      pos.y += POS_INTERVAL;
+      if (pos.y >= Y_POS_MAX)
+        pos.y = Y_POS_MAX;
       printf("y = %f\n", pos.y);
       break;
     default:

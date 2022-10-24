@@ -1,6 +1,13 @@
 #ifndef CONTROL_H_
 #define CONTROL_H_
 
+#define POS_INTERVAL 20
+#define X_POS_MIN 60
+#define Y_POS_MIN 60
+#define X_POS_MAX 240
+#define Y_POS_MAX 200
+
+
 class PosPublisher_ : public rclcpp::Node
 {
 public:
