@@ -10,55 +10,36 @@
 
 void PosPublisher_::initialize()
 {
-  auto qos = rclcpp::QoS(rclcpp::KeepLast(10));
+  this->declare_parameter("qos_depth", 10);
+  int8_t qos_depth = this->get_parameter("qos_depth").get_value<int8_t>();
+  this->get_parameter("qos_depth", qos_depth);
+
+  auto qos = rclcpp::QoS(rclcpp::KeepLast(qos_depth));
   pub_pos = this->create_publisher<geometry_msgs::msg::Point>(
       topic_pos, qos);
+
   pos.x = X_POS_MIN;
   pos.y = Y_POS_MIN;
 
   timer_ = this->create_wall_timer(
-      std::chrono::milliseconds(static_cast<int>(100)),
+      std::chrono::milliseconds(static_cast<int>(900)),
       std::bind(&PosPublisher_::get_key_and_pub_pos, this));
 }
 
 void PosPublisher_::get_key_and_pub_pos()
 {
-  char input;
+  pos.x += POS_INTERVAL;
+  if (pos.x >= X_POS_MAX)
+    pos.x = X_POS_MIN;
 
-  std::cin >> input;
-
-  switch (input) {
-    case 'a':
-      pos.x -= POS_INTERVAL;
-      if (pos.x <= X_POS_MIN)
-        pos.x = X_POS_MIN;
-      printf("x = %f\n", pos.x);
-      break;
-    case 'd':
-      pos.x += POS_INTERVAL;
-      if (pos.x >= X_POS_MAX)
-        pos.x = X_POS_MAX;
-      printf("x = %f\n", pos.x);
-      break;
-    case 's':
-      pos.y -= POS_INTERVAL;
-      if (pos.y <= Y_POS_MIN)
-        pos.y = Y_POS_MIN;
-      printf("y = %f\n", pos.y);
-      break;
-    case 'w':
-      pos.y += POS_INTERVAL;
-      if (pos.y >= Y_POS_MAX)
-        pos.y = Y_POS_MAX;
-      printf("y = %f\n", pos.y);
-      break;
-    default:
-      printf("x = %f\n", pos.x);
-      printf("y = %f\n", pos.y);
-      break;
-  }
+  pos.y += POS_INTERVAL;
+  if (pos.y >= Y_POS_MAX)
+    pos.y = Y_POS_MIN;
 
   pub_pos->publish(pos);
+
+  RCLCPP_INFO(this->get_logger(), "Published x %.2f", pos.x);
+  RCLCPP_INFO(this->get_logger(), "Published y %.2f", pos.y);
 }
 
 int main(int argc, char* argv[])
