@@ -32,6 +32,15 @@ void CamPublisher_::initialize()
   this->declare_parameter("qos_depth", 10);
   int8_t qos_depth = this->get_parameter("qos_depth").get_value<int8_t>();
   this->get_parameter("qos_depth", qos_depth);
+
+  this->declare_parameter("cap_width", 640);
+  int cap_width = this->get_parameter("cap_width").get_value<int>();
+  this->get_parameter("cap_width", cap_width);
+
+  this->declare_parameter("cap_height", 640);
+  int cap_height = this->get_parameter("cap_height").get_value<int>();
+  this->get_parameter("cap_height", cap_height);
+
   auto qos = rclcpp::QoS(rclcpp::KeepLast(qos_depth));
   pub_ = this->create_publisher<sensor_msgs::msg::Image>(
       "/camera/mat2image_image2mat", qos);
@@ -43,8 +52,8 @@ void CamPublisher_::initialize()
     throw std::runtime_error("Could not open video stream");
   }
 
-  cap.set(cv::CAP_PROP_FRAME_WIDTH, 640);
-  cap.set(cv::CAP_PROP_FRAME_HEIGHT, 640);
+  cap.set(cv::CAP_PROP_FRAME_WIDTH, cap_width);
+  cap.set(cv::CAP_PROP_FRAME_HEIGHT, cap_height);
 
   timer_ = this->create_wall_timer(
       std::chrono::milliseconds(static_cast<int>(1000 / 30)), // 30 fps

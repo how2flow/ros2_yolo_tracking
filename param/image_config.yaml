@@ -1,3 +1,5 @@
-/**: 
-  ros__parameters: 
+/**:
+  ros__parameters:
     qos_depth: 10
+    cap_width: 640
+    cap_height: 640
