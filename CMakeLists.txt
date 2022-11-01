@@ -34,9 +34,9 @@ set(RGA_LIBS rga)
 set(RKNN_RT_LIB ${CMAKE_SOURCE_DIR}/lib/librknnrt.so)
 
 # camera
-add_executable(img_pub src/img_pub.cpp src/postprocess.cc)
+add_executable(img_pub src/img/img_pub.cpp src/img/postprocess.cc)
 ament_target_dependencies(img_pub OpenCV PkgConfig rclcpp sensor_msgs std_msgs)
-add_executable(img_sub src/img_sub.cpp)
+add_executable(img_sub src/img/img_sub.cpp)
 ament_target_dependencies(img_sub OpenCV PkgConfig rclcpp sensor_msgs std_msgs)
 target_link_libraries(img_pub
     ${OpenCV_LIBS}
@@ -48,9 +48,9 @@ target_link_libraries(img_sub
 )
 
 # motors
-add_executable(control src/control.cpp)
+add_executable(control src/servo/control.cpp)
 ament_target_dependencies(control geometry_msgs rclcpp std_msgs PkgConfig)
-add_executable(servo src/servo.cpp)
+add_executable(servo src/servo/servo.cpp)
 ament_target_dependencies(servo geometry_msgs rclcpp std_msgs PkgConfig)
 target_link_libraries(servo
     ${WIRINGPI_LIBRARIES}
