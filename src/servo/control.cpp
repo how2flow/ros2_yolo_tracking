@@ -8,6 +8,16 @@
 #include "rclcpp/rclcpp.hpp"
 #include "servo/control.hpp"
 
+PosPublisher_::PosPublisher_(const rclcpp::NodeOptions & node_options)
+  : Node("control", node_options)
+{
+  this->initialize();
+}
+
+PosPublisher_::~PosPublisher_()
+{
+}
+
 void PosPublisher_::initialize()
 {
   this->declare_parameter("qos_depth", 10);

@@ -27,6 +27,21 @@
 
 using namespace std::chrono_literals;
 
+CamPublisher_::CamPublisher_(const rclcpp::NodeOptions & node_options)
+  : Node("camera", node_options)
+{
+  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+  this->init_rga();
+  this->create_network();
+  this->initialize();
+}
+
+CamPublisher_::~CamPublisher_()
+{
+  this->cap.release();
+  free(this->resize_buf);
+}
+
 void CamPublisher_::initialize()
 {
   this->declare_parameter("qos_depth", 10);
@@ -41,9 +56,9 @@ void CamPublisher_::initialize()
   int cap_height = this->get_parameter("cap_height").get_value<int>();
   this->get_parameter("cap_height", cap_height);
 
-  auto qos = rclcpp::QoS(rclcpp::KeepLast(qos_depth));
-  pub_ = this->create_publisher<sensor_msgs::msg::Image>(
-      "/camera/mat2image_image2mat", qos);
+  auto qos_img = rclcpp::QoS(rclcpp::KeepLast(qos_depth));
+  pub_img = this->create_publisher<sensor_msgs::msg::Image>(
+      topic_img, qos_img);
 
   cap.open(0);
 
@@ -55,9 +70,9 @@ void CamPublisher_::initialize()
   cap.set(cv::CAP_PROP_FRAME_WIDTH, cap_width);
   cap.set(cv::CAP_PROP_FRAME_HEIGHT, cap_height);
 
-  timer_ = this->create_wall_timer(
+  timer_img = this->create_wall_timer(
       std::chrono::milliseconds(static_cast<int>(1000 / 30)), // 30 fps
-      std::bind(&CamPublisher_::timerCallback, this));
+      std::bind(&CamPublisher_::timerCallbackImg, this));
 }
 
 void CamPublisher_::init_rga()
@@ -212,7 +227,7 @@ unsigned char * CamPublisher_::load_model(const char *filename, int *model_size)
 
    }
    */
-void CamPublisher_::timerCallback()
+void CamPublisher_::timerCallbackImg()
 {
   cap >> frame;
 
@@ -314,7 +329,7 @@ void CamPublisher_::convert_and_publish(const cv::Mat& frame)
   msg.data.resize(size);
   memcpy(&msg.data[0], frame.data, size);
 
-  pub_->publish(msg);
+  pub_img->publish(msg);
 }
 
 int main(int argc, char* argv[])

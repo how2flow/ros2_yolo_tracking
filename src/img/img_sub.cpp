@@ -13,18 +13,29 @@
 
 #include "img/img_sub.hpp"
 
+CamSubscriber_::CamSubscriber_(const rclcpp::NodeOptions & node_options)
+  : Node("show", node_options)
+{
+  setvbuf(stdout, NULL, _IONBF, BUFSIZ);
+  this->initialize();
+}
+
+CamSubscriber_::~CamSubscriber_()
+{
+}
+
 //functions
 void CamSubscriber_::initialize()
 {
   this->declare_parameter("qos_depth", 10);
   int8_t qos_depth = this->get_parameter("qos_depth").get_value<int8_t>();
   this->get_parameter("qos_depth", qos_depth);
-  auto qos = rclcpp::QoS(rclcpp::KeepLast(qos_depth));
+  auto qos_img = rclcpp::QoS(rclcpp::KeepLast(qos_depth));
   auto callback =
     [this](const sensor_msgs::msg::Image::SharedPtr msg) {
       process_image(msg);
     };
-  sub_ = create_subscription<sensor_msgs::msg::Image>(topic_, qos, callback);
+  sub_ = create_subscription<sensor_msgs::msg::Image>(topic_img, qos_img, callback);
 }
 
 int CamSubscriber_::encoding2mat(const std::string& encoding)

@@ -9,16 +9,8 @@
 class Sg90Subscriber_ : public rclcpp::Node
 {
 public:
-  Sg90Subscriber_()
-  : Node("motor")
-  {
-	pwm_setup();
-    initialize();
-  }
-
-  ~Sg90Subscriber_()
-  {
-  }
+  explicit Sg90Subscriber_(const rclcpp::NodeOptions & node_options = rclcpp::NodeOptions());
+  virtual ~Sg90Subscriber_();
 
 private:
   // functions

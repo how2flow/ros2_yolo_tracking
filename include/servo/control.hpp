@@ -11,15 +11,8 @@
 class PosPublisher_ : public rclcpp::Node
 {
 public:
-  PosPublisher_()
-  : Node("key")
-  {
-    initialize();
-  }
-
-  ~PosPublisher_()
-  {
-  }
+  explicit PosPublisher_(const rclcpp::NodeOptions & node_options = rclcpp::NodeOptions());
+  virtual ~PosPublisher_();
 
 private:
   // functions
