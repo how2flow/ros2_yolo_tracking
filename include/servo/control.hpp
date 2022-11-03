@@ -20,9 +20,14 @@ private:
   void get_key_and_pub_pos();
 
   // vars
+  geometry_msgs::msg::Point pos;
+  geometry_msgs::msg::Point cam_pos;
+
   std::string topic_pos = "/control/position";
   rclcpp::Publisher<geometry_msgs::msg::Point>::SharedPtr pub_pos;
   rclcpp::TimerBase::SharedPtr timer_;
-  geometry_msgs::msg::Point pos;
+
+  std::string topic_cpos = "/camera/pos";
+  rclcpp::Subscription<geometry_msgs::msg::Point>::SharedPtr sub_cpos;
 };
 #endif

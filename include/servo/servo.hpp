@@ -19,8 +19,8 @@ private:
   void servo_write(geometry_msgs::msg::Point::SharedPtr pos);
 
   // vars
+  geometry_msgs::msg::Point pos;
   std::string topic_pos = "/control/position";
   rclcpp::Subscription<geometry_msgs::msg::Point>::SharedPtr sub_pos;
-  geometry_msgs::msg::Point pos;
 };
 #endif

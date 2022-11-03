@@ -16,8 +16,9 @@ private:
   unsigned char *load_data(FILE *fp, size_t ofst, size_t sz);
   unsigned char *load_model(const char *filename, int *model_size);
   void timerCallbackImg();
+  void timerCallbackPos();
   std::string mat2encoding(int mat_type);
-  void convert_and_publish(const cv::Mat& frame);
+  void mat2msg_and_publish(const cv::Mat& frame);
   cv::VideoCapture cap;
   cv::Mat frame;
 
@@ -46,11 +47,16 @@ private:
   int channel;
   int width;
   int height;
+  geometry_msgs::msg::Point center;
 
   void *resize_buf;
 
   std::string topic_img = "/camera/mat2msg";
   rclcpp::Publisher<sensor_msgs::msg::Image>::SharedPtr pub_img;
   rclcpp::TimerBase::SharedPtr timer_img;
+
+  std::string topic_pos = "/camera/pos";
+  rclcpp::Publisher<geometry_msgs::msg::Point>::SharedPtr pub_pos;
+  rclcpp::TimerBase::SharedPtr timer_pos;
 };
 #endif

@@ -22,6 +22,7 @@
 #include "rknpu/postprocess.hpp"
 #include "rclcpp/rclcpp.hpp"
 #include "sensor_msgs/msg/image.hpp"
+#include "geometry_msgs/msg/point.hpp"
 
 #include "img/img_pub.hpp"
 
@@ -60,6 +61,10 @@ void CamPublisher_::initialize()
   pub_img = this->create_publisher<sensor_msgs::msg::Image>(
       topic_img, qos_img);
 
+  auto qos_pos = rclcpp::QoS(rclcpp::KeepLast(qos_depth));
+  pub_pos = this->create_publisher<geometry_msgs::msg::Point>(
+      topic_pos, qos_pos);
+
   cap.open(0);
 
   if (!cap.isOpened()) {
@@ -73,6 +78,10 @@ void CamPublisher_::initialize()
   timer_img = this->create_wall_timer(
       std::chrono::milliseconds(static_cast<int>(1000 / 30)), // 30 fps
       std::bind(&CamPublisher_::timerCallbackImg, this));
+
+  timer_pos = this->create_wall_timer(
+      std::chrono::milliseconds(static_cast<int>(100)), // 100 ms
+      std::bind(&CamPublisher_::timerCallbackPos, this));
 }
 
 void CamPublisher_::init_rga()
@@ -234,6 +243,7 @@ void CamPublisher_::timerCallbackImg()
   if (frame.empty()) {
     return;
   }
+  flip(frame, frame, 0); /* optional */
 
   //proccessing
   src = wrapbuffer_virtualaddr(frame.data, frame.cols, frame.rows,
@@ -287,14 +297,17 @@ void CamPublisher_::timerCallbackImg()
     int y1 = det_result->box.top;
     int x2 = det_result->box.right;
     int y2 = det_result->box.bottom;
+    if ((strcmp(det_result->name, "cat") == 0)) {
+      center.x = (x1 + x2) / 2;
+      center.y = (y1 + y2) / 2;
+    }
     rectangle(resize_img, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 0, 0, 255), 3);
-    putText(resize_img, text, cv::Point(x1, y1 - 12), 
+    putText(resize_img, text, cv::Point(x1, y1 - 12),
       cv::FONT_HERSHEY_TRIPLEX, 1, cv::Scalar(0, 0, 255));
   }
 
   ret = rknn_outputs_release(ctx, io_num.n_output, outputs);
-
-  convert_and_publish(resize_img);
+  mat2msg_and_publish(resize_img);
 }
 
 std::string CamPublisher_::mat2encoding(int mat_type)
@@ -316,7 +329,7 @@ std::string CamPublisher_::mat2encoding(int mat_type)
   return 0;
 }
 
-void CamPublisher_::convert_and_publish(const cv::Mat& frame)
+void CamPublisher_::mat2msg_and_publish(const cv::Mat& frame)
 {
   auto msg = sensor_msgs::msg::Image();
 
@@ -330,6 +343,17 @@ void CamPublisher_::convert_and_publish(const cv::Mat& frame)
   memcpy(&msg.data[0], frame.data, size);
 
   pub_img->publish(msg);
+}
+
+void CamPublisher_::timerCallbackPos()
+{
+  auto msg = geometry_msgs::msg::Point();
+
+  msg.x = center.x;
+  msg.y = center.y;
+  pub_pos->publish(msg);
+  RCLCPP_INFO(this->get_logger(),
+    "Published cpos x: %d y: %d", (int)msg.x, (int)msg.y);
 }
 
 int main(int argc, char* argv[])
