@@ -1,8 +1,10 @@
 #ifndef SERVO_H_
 #define SERVO_H_
 
-#define PWM_SCALE 120
-#define PWM_PERIOD 2000
+#define MOTOR_X 23
+#define MOTOR_Y 7
+#define PWM_SCALE 2400 //based on 12Mhz (pwm1, pwm2)
+#define PWM_PERIOD 100
 #define X_POS_BASE ((PWM_PERIOD * 3) / 100)
 #define Y_POS_BASE ((PWM_PERIOD * 3) / 100)
 

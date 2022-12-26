@@ -8,9 +8,6 @@
 #include "geometry_msgs/msg/point.hpp"
 #include "servo/servo.hpp"
 
-#define MOTOR_X 23
-#define MOTOR_Y 7
-
 Sg90Subscriber_::Sg90Subscriber_(const rclcpp::NodeOptions & node_options)
   : Node("motor", node_options)
 {

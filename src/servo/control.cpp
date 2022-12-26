@@ -58,21 +58,39 @@ void PosPublisher_::initialize()
 
 void PosPublisher_::get_key_and_pub_pos()
 {
-/*
-  pos.x += POS_INTERVAL;
-  if (pos.x >= X_POS_MAX)
-    pos.x = X_POS_MIN;
+  char input;
 
-  pos.y += POS_INTERVAL;
-  if (pos.y >= Y_POS_MAX)
-    pos.y = Y_POS_MIN;
-*/
-  pos.x = 210;
-  pos.y = 100;
+  std::cin >> input;
+  switch(input) {
+    case 'w':
+      pos.y += POS_INTERVAL;
+      if (pos.y >= Y_POS_MAX)
+        pos.y = Y_POS_MAX;
+      break;
+    case 's':
+      pos.y -= POS_INTERVAL;
+      if (pos.y <= Y_POS_MIN)
+        pos.y = Y_POS_MIN;
+      break;
+    case 'a':
+      pos.x -= POS_INTERVAL;
+      if (pos.x <= X_POS_MIN)
+        pos.x = X_POS_MIN;
+      break;
+    case 'd':
+      pos.x += POS_INTERVAL;
+      if (pos.x >= X_POS_MAX)
+        pos.x = X_POS_MAX;
+      break;
+    default:
+      RCLCPP_WARN(this->get_logger(), "Invalid key value");
+      break;
+  }
+
   pub_pos->publish(pos);
 
-//  RCLCPP_INFO(this->get_logger(), "Published x %.2f", pos.x);
-//  RCLCPP_INFO(this->get_logger(), "Published y %.2f", pos.y);
+  RCLCPP_INFO(this->get_logger(), "Published x %.2f", pos.x);
+  RCLCPP_INFO(this->get_logger(), "Published y %.2f", pos.y);
 }
 
 int main(int argc, char* argv[])
