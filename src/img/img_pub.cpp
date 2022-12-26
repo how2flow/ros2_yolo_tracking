@@ -301,6 +301,10 @@ void CamPublisher_::timerCallbackImg()
       center.x = (x1 + x2) / 2;
       center.y = (y1 + y2) / 2;
     }
+    else {
+      center.x = 0;
+      center.y = 0;
+    }
     rectangle(resize_img, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 0, 0, 255), 3);
     putText(resize_img, text, cv::Point(x1, y1 - 12),
       cv::FONT_HERSHEY_TRIPLEX, 1, cv::Scalar(0, 0, 255));
@@ -351,9 +355,11 @@ void CamPublisher_::timerCallbackPos()
 
   msg.x = center.x;
   msg.y = center.y;
-  pub_pos->publish(msg);
-  RCLCPP_INFO(this->get_logger(),
-    "Published cpos x: %d y: %d", (int)msg.x, (int)msg.y);
+  if (center.x != 0 || center.y != 0) {
+    pub_pos->publish(msg);
+    RCLCPP_INFO(this->get_logger(),
+      "Published cpos x: %d y: %d", (int)msg.x, (int)msg.y);
+  }
 }
 
 int main(int argc, char* argv[])
