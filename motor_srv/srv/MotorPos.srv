@@ -1,0 +1,6 @@
+# Request
+int8 flag
+---
+# Response
+int8 dst_x
+int8 dst_y

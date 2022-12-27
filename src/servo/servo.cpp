@@ -2,28 +2,31 @@
 #include <memory>
 #include <string>
 #include <stdlib.h>
-#include <wiringPi.h>
 
 #include "rclcpp/rclcpp.hpp"
 #include "geometry_msgs/msg/point.hpp"
 #include "servo/servo.hpp"
 
-Sg90Subscriber_::Sg90Subscriber_(const rclcpp::NodeOptions & node_options)
-  : Node("motor", node_options)
+Servo_::Servo_(const rclcpp::NodeOptions & node_options)
+: Node("motor", node_options),
+  motor_flag_(0),
+  motor_x_(0),
+  motor_y_(0)
 {
-  this->pwm_setup();
   this->initialize();
 }
 
-Sg90Subscriber_::~Sg90Subscriber_()
+Servo_::~Servo_()
 {
 }
 
-void Sg90Subscriber_::initialize()
+void Servo_::initialize()
 {
   this->declare_parameter("qos_depth", 10);
   int8_t qos_depth = this->get_parameter("qos_depth").get_value<int8_t>();
   this->get_parameter("qos_depth", qos_depth);
+  duty.x = 5;
+  duty.y = 5;
 
   auto qos_cpos = rclcpp::QoS(rclcpp::KeepLast(qos_depth));
   sub_cpos = this->create_subscription<geometry_msgs::msg::Point>(
@@ -38,23 +41,65 @@ void Sg90Subscriber_::initialize()
         "Subscribed cpos x: %d y: %d", (int)cam_pos.x, (int)cam_pos.y);
     }
   );
+
+  auto get_motor_flag =
+    [this](
+    const std::shared_ptr<MotorPosition::Request> request,
+    std::shared_ptr<MotorPosition::Response> response) -> void
+    {
+      motor_flag_ = request->flag;
+      motor_x_ =
+        this->dst_x_position(cam_pos.x, motor_flag_);
+      motor_y_ = 
+        this->dst_y_position(cam_pos.y, motor_flag_);
+      response->dst_x = X_POS_MIN + motor_x_;
+      response->dst_y = Y_POS_MAX - motor_y_;
+	};
+
+  motor_service_server_ =
+    create_service<MotorPosition>(service_pos, get_motor_flag);
 }
 
-void Sg90Subscriber_::pwm_setup()
+int Servo_::dst_x_position(const int & pos, const int8_t flag)
 {
-  wiringPiSetup();
-  pinMode(MOTOR_X, PWM_OUTPUT);
-  pinMode(MOTOR_Y, PWM_OUTPUT);
-  pwmSetClock(PWM_SCALE);
-  pwmSetRange(PWM_PERIOD);
-  pwmWrite(MOTOR_X, X_POS_BASE);
-  pwmWrite(MOTOR_Y, Y_POS_BASE);
+  if (flag) {
+    if (pos > 120) {
+      duty.x = duty.x + 1;
+      if (duty.x >= DUTY_X_MAX - DUTY_X_MIN)
+        duty.x = (DUTY_X_MAX - DUTY_X_MIN);
+    }
+    if (pos < 440) {
+      duty.x = duty.x - 1;
+      if (duty.x <= 0)
+        duty.x = 0;
+    }
+  }
+
+  return (int)duty.x;
+}
+
+int Servo_::dst_y_position(const int & pos, const int8_t flag)
+{
+  if (flag) {
+    if (pos > 120) {
+      duty.y = duty.y - 1;
+      if (duty.y <= 0)
+        duty.y = 0;
+    }
+    if (pos < 440) {
+      duty.y = duty.y + 1;
+      if (duty.y >= DUTY_Y_MAX - DUTY_Y_MIN)
+        duty.y = (DUTY_Y_MAX - DUTY_Y_MIN);
+    }
+  }
+
+  return (int)duty.y;
 }
 
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  auto node = std::make_shared<Sg90Subscriber_>();
+  auto node = std::make_shared<Servo_>();
   rclcpp::spin(node);
   rclcpp::shutdown();
 

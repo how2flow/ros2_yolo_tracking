@@ -18,6 +18,7 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(geometry_msgs REQUIRED)
+find_package(motor_srv REQUIRED)
 find_package(OpenCV REQUIRED)
 find_package(PkgConfig REQUIRED)
 find_package(rclcpp REQUIRED)
@@ -49,10 +50,22 @@ target_link_libraries(img_sub
 
 # motors
 add_executable(control src/servo/control.cpp)
-ament_target_dependencies(control geometry_msgs rclcpp std_msgs PkgConfig)
+ament_target_dependencies(control
+  motor_srv
+  geometry_msgs
+  rclcpp
+  std_msgs
+  PkgConfig
+)
 add_executable(servo src/servo/servo.cpp)
-ament_target_dependencies(servo geometry_msgs rclcpp std_msgs PkgConfig)
-target_link_libraries(servo
+ament_target_dependencies(servo
+  motor_srv
+  geometry_msgs
+  rclcpp
+  std_msgs
+  PkgConfig
+)
+target_link_libraries(control
     ${WIRINGPI_LIBRARIES}
 )
 
