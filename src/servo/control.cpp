@@ -72,7 +72,8 @@ void PosContol_::send_request()
       auto response = future.get();
       RCLCPP_INFO(this->get_logger(), "Result x: %d y: %d", response->dst_x, response->dst_y);
       pwmWrite(MOTOR_X, response->dst_x);
-      pwmWrite(MOTOR_Y, response->dst_y);
+      // pwmWrite(MOTOR_Y, response->dst_y);
+      delay(500);
       return;
     };
 
@@ -89,7 +90,7 @@ int main(int argc, char* argv[])
   while (rclcpp::ok()) {
     rclcpp::spin_some(node);
     node->send_request();
-    delay(500);
+    delay(100);
   }
   rclcpp::shutdown();
 

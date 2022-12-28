@@ -5,12 +5,18 @@
 
 #define DUTY_X_MIN 3
 #define DUTY_X_MAX 12
+#define DUTY_X_BASE 6
 #define DUTY_Y_MIN 3
 #define DUTY_Y_MAX 10
+#define DUTY_Y_BASE 5
+
 #define X_POS_MIN DUTY_X_MIN
 #define X_POS_MAX DUTY_X_MAX
 #define Y_POS_MIN DUTY_Y_MIN
 #define Y_POS_MAX DUTY_Y_MAX
+
+#define AXIS_CENTER 320
+#define AXIS_INTERVAL 120
 
 class Servo_ : public rclcpp::Node
 {
@@ -33,6 +39,7 @@ private:
   int motor_flag_;
   int motor_x_;
   int motor_y_;
+  int cnt;
 
   std::string topic_cpos = "/camera/pos";
   rclcpp::Subscription<geometry_msgs::msg::Point>::SharedPtr sub_cpos;

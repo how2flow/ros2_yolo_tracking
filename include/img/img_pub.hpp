@@ -1,6 +1,8 @@
 #ifndef IMG_PUB_H_
 #define IMG_PUB_H_
 
+#define TARGET "cell phone"
+
 using namespace std::chrono_literals;
 
 class CamPublisher_: public rclcpp::Node

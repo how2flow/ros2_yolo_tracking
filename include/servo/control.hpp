@@ -7,8 +7,8 @@
 #define MOTOR_Y 7
 #define PWM_SCALE 2400 // based on M1: 12Mhz (pwm1, pwm2)
 #define PWM_PERIOD 100
-#define X_POS_BASE ((PWM_PERIOD * 6) / 100)
-#define Y_POS_BASE ((PWM_PERIOD * 5) / 100)
+#define X_POS_BASE 6
+#define Y_POS_BASE 5
 
 class PosContol_ : public rclcpp::Node
 {

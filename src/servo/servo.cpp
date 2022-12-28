@@ -27,6 +27,7 @@ void Servo_::initialize()
   this->get_parameter("qos_depth", qos_depth);
   duty.x = 5;
   duty.y = 5;
+  cnt = 0;
 
   auto qos_cpos = rclcpp::QoS(rclcpp::KeepLast(qos_depth));
   sub_cpos = this->create_subscription<geometry_msgs::msg::Point>(
@@ -50,10 +51,12 @@ void Servo_::initialize()
       motor_flag_ = request->flag;
       motor_x_ =
         this->dst_x_position(cam_pos.x, motor_flag_);
+      /*
       motor_y_ =
         this->dst_y_position(cam_pos.y, motor_flag_);
+      */
       response->dst_x = motor_x_;
-      response->dst_y = motor_y_;
+      // response->dst_y = motor_y_;
 	};
 
   motor_service_server_ =
@@ -62,22 +65,19 @@ void Servo_::initialize()
 
 int Servo_::dst_x_position(const int & pos, const int8_t flag)
 {
-  if (tmp.x)
+  cnt++;
+  if (tmp.x && !(cnt % 2))
     duty.x = tmp.x;
+  else if (tmp.x && !(cnt % 2))
+    return tmp.x;
 
-  if ((pos > 0) && flag) {
-    if (pos < 120) {
-      duty.x = duty.x + 1;
-      if (duty.x >= DUTY_X_MAX)
-        duty.x = DUTY_X_MAX;
-    }
-
-    if (pos > 440) {
-      duty.x = duty.x - 1;
-      if (duty.x <= DUTY_X_MIN)
-        duty.x = DUTY_X_MIN;
-    }
+  if (pos > 0 && flag) {
+    if (pos <= (AXIS_CENTER - AXIS_INTERVAL))
+      duty.x += 1;
+    else if (pos > (AXIS_CENTER + AXIS_INTERVAL))
+      duty.x -= 1;
   }
+
   tmp.x = duty.x;
 
   return (int)duty.x;
@@ -85,22 +85,19 @@ int Servo_::dst_x_position(const int & pos, const int8_t flag)
 
 int Servo_::dst_y_position(const int & pos, const int8_t flag)
 {
-  if (tmp.y)
+  cnt++;
+  if (tmp.y && !(cnt % 2))
     duty.y = tmp.y;
+  else if (tmp.y && !(cnt % 2))
+    return tmp.y;
 
-  if ((pos > 0) && flag) {
-    if (pos < 120) {
-      duty.y = duty.y - 1;
-      if (duty.y <= DUTY_Y_MIN)
-        duty.y = DUTY_Y_MIN;
-    }
-
-    if (pos > 440) {
-      duty.y = duty.y + 1;
-      if (duty.y >= DUTY_Y_MAX)
-        duty.y = DUTY_Y_MAX;
-    }
+  if (pos > 0 && flag) {
+    if (pos <= (AXIS_CENTER - AXIS_INTERVAL))
+      duty.y -= 1;
+    else if (pos > (AXIS_CENTER + AXIS_INTERVAL))
+      duty.y += 1;
   }
+
   tmp.y = duty.y;
 
   return (int)duty.y;

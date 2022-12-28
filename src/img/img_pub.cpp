@@ -288,6 +288,12 @@ void CamPublisher_::timerCallbackImg()
 
   // Draw Objects
   char text[256];
+
+  if (!detect_result_group.count) {
+    center.x = 320;
+    center.y = 320;
+  }
+
   for (int i = 0; i < detect_result_group.count; i++)
   {
     detect_result_t *det_result = &(detect_result_group.results[i]);
@@ -297,14 +303,11 @@ void CamPublisher_::timerCallbackImg()
     int y1 = det_result->box.top;
     int x2 = det_result->box.right;
     int y2 = det_result->box.bottom;
-    if ((strcmp(det_result->name, "cat") == 0)) {
+    if ((strcmp(det_result->name, TARGET) == 0)) {
       center.x = (x1 + x2) / 2;
       center.y = (y1 + y2) / 2;
     }
-    else {
-      center.x = 0;
-      center.y = 0;
-    }
+
     rectangle(resize_img, cv::Point(x1, y1), cv::Point(x2, y2), cv::Scalar(255, 0, 0, 255), 3);
     putText(resize_img, text, cv::Point(x1, y1 - 12),
       cv::FONT_HERSHEY_TRIPLEX, 1, cv::Scalar(0, 0, 255));
