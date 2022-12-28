@@ -29,6 +29,7 @@ private:
   // vars
   geometry_msgs::msg::Point cam_pos;
   geometry_msgs::msg::Point duty;
+  geometry_msgs::msg::Point tmp;
   int motor_flag_;
   int motor_x_;
   int motor_y_;

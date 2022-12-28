@@ -50,10 +50,10 @@ void Servo_::initialize()
       motor_flag_ = request->flag;
       motor_x_ =
         this->dst_x_position(cam_pos.x, motor_flag_);
-      motor_y_ = 
+      motor_y_ =
         this->dst_y_position(cam_pos.y, motor_flag_);
-      response->dst_x = X_POS_MIN + motor_x_;
-      response->dst_y = Y_POS_MAX - motor_y_;
+      response->dst_x = motor_x_;
+      response->dst_y = motor_y_;
 	};
 
   motor_service_server_ =
@@ -62,36 +62,46 @@ void Servo_::initialize()
 
 int Servo_::dst_x_position(const int & pos, const int8_t flag)
 {
-  if (flag) {
-    if (pos > 120) {
+  if (tmp.x)
+    duty.x = tmp.x;
+
+  if ((pos > 0) && flag) {
+    if (pos < 120) {
       duty.x = duty.x + 1;
-      if (duty.x >= DUTY_X_MAX - DUTY_X_MIN)
-        duty.x = (DUTY_X_MAX - DUTY_X_MIN);
+      if (duty.x >= DUTY_X_MAX)
+        duty.x = DUTY_X_MAX;
     }
-    if (pos < 440) {
+
+    if (pos > 440) {
       duty.x = duty.x - 1;
-      if (duty.x <= 0)
-        duty.x = 0;
+      if (duty.x <= DUTY_X_MIN)
+        duty.x = DUTY_X_MIN;
     }
   }
+  tmp.x = duty.x;
 
   return (int)duty.x;
 }
 
 int Servo_::dst_y_position(const int & pos, const int8_t flag)
 {
-  if (flag) {
-    if (pos > 120) {
+  if (tmp.y)
+    duty.y = tmp.y;
+
+  if ((pos > 0) && flag) {
+    if (pos < 120) {
       duty.y = duty.y - 1;
-      if (duty.y <= 0)
-        duty.y = 0;
+      if (duty.y <= DUTY_Y_MIN)
+        duty.y = DUTY_Y_MIN;
     }
-    if (pos < 440) {
+
+    if (pos > 440) {
       duty.y = duty.y + 1;
-      if (duty.y >= DUTY_Y_MAX - DUTY_Y_MIN)
-        duty.y = (DUTY_Y_MAX - DUTY_Y_MIN);
+      if (duty.y >= DUTY_Y_MAX)
+        duty.y = DUTY_Y_MAX;
     }
   }
+  tmp.y = duty.y;
 
   return (int)duty.y;
 }

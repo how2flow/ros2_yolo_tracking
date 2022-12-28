@@ -89,6 +89,7 @@ int main(int argc, char* argv[])
   while (rclcpp::ok()) {
     rclcpp::spin_some(node);
     node->send_request();
+    delay(500);
   }
   rclcpp::shutdown();
 
