@@ -9,6 +9,7 @@
 #define PWM_PERIOD 100
 #define X_POS_BASE 6
 #define Y_POS_BASE 5
+#define DELAY 30
 
 class PosContol_ : public rclcpp::Node
 {
