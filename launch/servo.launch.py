@@ -10,14 +10,14 @@ def generate_launch_description():
     servo_params = LaunchConfiguration(
     'servo_params',
     default = os.path.join(
-        get_package_share_directory('yolo_tracer'),
+        get_package_share_directory('yolo_tracking'),
         'param',
         'servo_config.yaml'))
 
 #    pos_params = LaunchConfiguration(
 #    'pos_params',
 #    default = os.path.join(
-#        get_package_share_directory('yolo_tracer'),
+#        get_package_share_directory('yolo_tracking'),
 #        'param',
 #        'pos_info.yaml'))
 
@@ -33,14 +33,14 @@ def generate_launch_description():
 #            description = 'Full path of parameter file'),
 
         Node(
-            package = 'yolo_tracer',
+            package = 'yolo_tracking',
             executable = 'servo',
             name = 'servo',
             parameters = [servo_params], # pos_params],
             output = 'screen'),
 
         Node(
-            package = 'yolo_tracer',
+            package = 'yolo_tracking',
             executable = 'control',
             name = 'control',
             parameters = [servo_params], # pos_params],

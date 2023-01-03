@@ -1,4 +1,4 @@
-# yolo_tracer
+# yolo_tracking
 
 it is ros2-foxy pkg on ODROID-M1.
 

@@ -95,7 +95,7 @@ void CamPublisher_::init_rga()
 int CamPublisher_::create_network()
 {
   printf("Loading mode...\n");
-  model_name="/home/odroid/yolov5s-640-640.rknn";
+  model_name="/home/odroid/robot_ws/src/yolo_tracking/model/yolov5s-640-640.rknn";
   model_data_size = 0;
   model_data = load_model(model_name, &model_data_size);
   ret = rknn_init(&ctx, model_data, model_data_size, 0, NULL);
