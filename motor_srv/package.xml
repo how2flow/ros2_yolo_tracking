@@ -4,9 +4,9 @@
   <name>motor_srv</name>
   <version>0.0.1</version>
   <description>motor service</description>
-  <maintainer email="jkhpro1003@gmail.com">steve.jeong</maintainer>
+  <maintainer email="how2soft@gmail.com">Steve Jeong</maintainer>
   <license>Apache2.0</license>
-  <author email="jkhpro1003@gmail.com">steve.jeong</author>
+  <author email="how2soft@gmail.com">Steve Jeong</author>
   <buildtool_depend>ament_cmake</buildtool_depend>
   <buildtool_depend>rosidl_default_generators</buildtool_depend>
   <exec_depend>builtin_interfaces</exec_depend>
