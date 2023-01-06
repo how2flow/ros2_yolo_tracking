@@ -8,7 +8,7 @@ it is ros2-foxy pkg on ODROID-M1.
 - sg90 x 2
 
 ### requirements
-- [ubuntu-ros2-odroidm1](https://dn.odroid.com/RK3568/ODROID-M1/Ubuntu/ubuntu-20.04-ros2-odroidm1-20230104.img.xz)
+- [ROS2 with NPU](https://wiki.odroid.com/getting_started/os_installation_guide#tab__odroid-m1)
 - ros2 (foxy, preinstalled)
 - opencv (preinstalled)
 - librga-dev (preinstalled)
