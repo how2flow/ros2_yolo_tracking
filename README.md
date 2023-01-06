@@ -16,7 +16,7 @@ it is ros2-foxy pkg on ODROID-M1.
 - opencv (preinstalled)
 - librga-dev (preinstalled)
 - odroid-wiringpi
-- libwirinpi-dev
+- libwiringpi-dev
 
 ### circuit
 ---------------------------------------
