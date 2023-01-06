@@ -16,6 +16,12 @@ it is ros2-foxy pkg on ODROID-M1.
 - libwirinpi-dev
 
 ### manual
+
+[WARN] Camera screen flips and motor control direction must be adjusted personally!
+
+- [Camera screen setting](doc/camera_screen_setting.rst)
+- [Motor direction setting](doc/motor_direction_setting.rst)
+
 1. Download & Build package.
 ```
 $ git clone https://github.com/how2flow/ros2_yolo_tracking yolo_tracking
