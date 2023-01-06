@@ -3,9 +3,16 @@
 
 #include "motor_srv/srv/motor_pos.hpp"
 
+// this is wiringpi pin number 23. not physical pin number.
 #define MOTOR_X 23
+// this is wiringpi pin number 7. not physical pin number.
+// but in this case, they are same.
 #define MOTOR_Y 7
-#define PWM_SCALE 2400 // based on M1: 12Mhz (pwm1, pwm2)
+
+// based on M1: 12Mhz (pwm1, pwm2)
+// if you wna't use pwm9, set scale 4800.
+// pwm9 freq is 24Mhz
+#define PWM_SCALE 2400
 #define PWM_PERIOD 100
 #define X_POS_BASE 6
 #define Y_POS_BASE 5
